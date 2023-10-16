@@ -6,14 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDos</title>
     <style>
-        /* button {
-            color: white;
-            border-radius: 20px;
-            background: linear-gradient(145deg, #373131, #2e2929);
-            box-shadow: 32px 32px 63px #1f1c1c,
-                -32px -32px 63px #474040;
-                padding: 7px;
-        } */
         button {
             padding: 1.3em 2em;
             font-size: 12px;
@@ -43,8 +35,79 @@
     </style>
 </head>
 <script>
+    //deletion of a task
+    function deletedone(id) {
+        console.log("Task Deleted");
+        var task=document.getElementById(id);
+        task.remove();
+    }
+    function deletetodo(id) {
+        fetch("http://localhost:3000/todos/"+id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(deletedone(id))
+    }
+
+    //Showing the list to user
+    function todosCallback(result) {
+        console.log(result);
+        var maindata = document.getElementById("mainArea");
+        // maindata.innerHTML = JSON.stringify(result);
+        for (let i = 0; i < result.length; i++) {
+            var a = document.createElement("div");
+
+            var grandchild = document.createElement("span");
+            grandchild.innerHTML = result[i].title;
+
+            var grandchild2 = document.createElement("span");
+            grandchild2.innerHTML = result[i].description;
+
+            var grandchild3 = document.createElement("button");
+            grandchild3.innerHTML = "Delete";
+            grandchild3.setAttribute("onclick", "deletetodo(" + result[i].id + ")")
+
+            a.appendChild(grandchild);
+            a.appendChild(grandchild2);
+            a.appendChild(grandchild3);
+            a.setAttribute("id",result[i].id);
+
+            // a.innerHTML = result[i].title;
+            maindata.appendChild(a);
+        }
+    }
+    function getdataCallback(resp) {
+        resp.json().then(todosCallback);
+    }
+    function getdata() {
+        fetch("http://localhost:3000/todos", {
+            method: "GET"
+        }).then(getdataCallback)
+    }
+    getdata();
+
+    //adding the task
     function parseddata(result) {
         console.log(result);
+        var maindata = document.getElementById("mainArea");
+        var a = document.createElement("div");
+
+        var grandchild = document.createElement("span");
+        grandchild.innerHTML = result.title;
+
+        var grandchild2 = document.createElement("span");
+        grandchild2.innerHTML = result.description;
+
+        var grandchild3 = document.createElement("button");
+        grandchild3.innerHTML = "Delete";
+
+        a.appendChild(grandchild);
+        a.appendChild(grandchild2);
+        a.appendChild(grandchild3);
+        a.setAttribute("id",result.id);
+
+        maindata.appendChild(a);
     }
     function callback(data) {
         data.json().then(parseddata);
@@ -69,20 +132,22 @@
 
 </script>
 
-<body style="background-image: url(C:\Users\Akem\OneDrive\Desktop\posters\streetcarsfograincity.png);" >
+<body>
     <div class="flex" style="display: flex; flex-direction: column;align-items: center;border: 2px solid black;margin: 0 200px;
-    padding: 0 0 40px 0; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
+    padding: 0 0 0px 0; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
         <header>
             <h1>To-Do List</h1>
         </header>
-        <main style="display: flex;flex-direction: column;">
+        <div style="display: flex;flex-direction: column;">
             <h3>Title of the task</h3>
             <input style="margin: 0px;" type="text" id="title">
             <h3>Task description</h3>
             <input style="margin: 0px;" type="text" id="description">
-            <button onclick="onPress()" style="margin: 30px 0 0 0;">Set the task</button>
-        </main>
-
+            <button onclick="onPress()" style="margin: 30px 0 30px 0;">Set the task</button>
+        </div>
+    </div>
+    <div id="mainArea" style="margin: 0px;">
+        hi there
     </div>
 
 </body>
